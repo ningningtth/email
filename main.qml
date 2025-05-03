@@ -3,21 +3,14 @@ import QtQuick.Window 2.15
 import QtQuick
 import QtQuick.Controls
 import QtQuick.Layouts
+
 Window {
     id:main_window
     width: 1040
     height: 980
     color: "grey"
     visible: true
-    title: qsTr("Mail--")
-    //左边功能部分
-    ListModel{
-        id:tool_lm
-        ListElement{ name: qsTr("Inbox")}
-        ListElement{ name: qsTr("Starred") }
-        ListElement{ name: qsTr("Sent") }
-        ListElement{ name: qsTr("Drafts") }
-    }
+    title: qsTr("text_Mail")
     Rectangle{
         id:window_bg
         width: main_window.width
@@ -28,80 +21,88 @@ Window {
             GradientStop { position: 1.0; color: "steelblue" }
         }
     }
-    Rectangle{
-        id:mail_message
-        width: 200
-        height: 150
-        anchors.bottom: tool_lv.top
-        //
-        color: "red"
-        Rectangle{
-           id:msg_tx_bg
-           width: 180
-           height: 60
-           radius: 20
-           anchors.bottom: parent.bottom
-           anchors.centerIn: parent
-           Text {
-               id:msg_text
-               anchors.centerIn: parent
-               text: qsTr("Compose")
-           }
-        }
-
-    }
-    Rectangle{
-        color:"transparent"
-        id:tool_lv
-        width: 200
-        height: main_window.height-mail_message.height
-        anchors.top: mail_message.bottom
-        anchors.left: main_window.left
-        //anchors.centerIn: parent
-        ListView{
-            anchors.fill: parent
-            opacity: 1
-            visible: true
-            model: tool_lm
-            delegate:ColumnLayout{
+    RowLayout{
+        anchors.fill: parent
+        width: 1040
+        height:980
+        spacing: 0
+        ColumnLayout{
+            width: 200
+            height: 980
+            Rectangle{
+                id:mail_message
+                width: 200
+                height: 150
+                color: "red"
                 Rectangle{
-                    id:tool
-                    width: 200
-                    height: 50
-                    radius: 20
-                    color:tool_ma.containsMouse?"lightslategrey":"transparent"
-                    Behavior on color{
-                        ColorAnimation {
-                            duration: 200
+                   id:msg_tx_bg
+                   width: 180
+                   height: 60
+                   radius: 20
+                   Text {
+                       id:msg_text
+                       anchors.centerIn: parent
+                       text: qsTr("Compose")
+                   }
+                }
+
+            }
+            ListModel{
+                id:tool_lm
+                ListElement{ name: qsTr("Inbox")}
+                ListElement{ name: qsTr("Starred") }
+                ListElement{ name: qsTr("Sent") }
+                ListElement{ name: qsTr("Drafts") }
+            }
+            Rectangle{
+                color:"transparent"
+                id:tool_lv
+                width: 200
+                height: 980-mail_message.height
+                ListView{
+                    anchors.fill: parent
+                    opacity: 1
+                    visible: true
+                    model: tool_lm
+                    delegate:ColumnLayout{
+                        Rectangle{
+                            id:tool
+                            width: 200
+                            height: 50
+                            radius: 20
+                            color:tool_ma.containsMouse?"lightslategrey":"transparent"
+                            Behavior on color{
+                                ColorAnimation {
+                                    duration: 200
+                                }
+                            }
+                            Text{
+                                anchors.centerIn: parent
+                                text: name
+                            }
+                            MouseArea{
+                                id:tool_ma
+                                anchors.fill: parent
+                                hoverEnabled: true
+                            }
                         }
-                    }
-                    Text{
-                        anchors.centerIn: parent
-                        text: name
-                    }
-                    MouseArea{
-                        id:tool_ma
-                        anchors.fill: parent
-                        hoverEnabled: true
                     }
                 }
             }
         }
-    }
-    //邮件内容列表
-    Rectangle{
-        id:content
-        width: main_window.width-tool_lv.width
-        height: main_window.height
-        color: "white"
-        anchors.left: tool_lv.right
-        anchors.right: main_window.right
-    }
-    Rectangle{
-        id:seeting
-        Image {
-            id: name
-            source: "file"
+        ColumnLayout{
+            id:content_bg
+            Layout.fillWidth:true
+            //width: main_window.width-tool_lv.width
+            height: main_window.height
+            Rectangle{
+                id:content
+                Layout.fillWidth:true
+                Layout.preferredWidth: main_window.width-tool_lv.width
+                //width: main_window.width-tool_lv.width
+                height: main_window.height
+                color: "white"
+            }
         }
     }
 }
