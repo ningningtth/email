@@ -11,6 +11,7 @@ Window {
     color: "grey"
     visible: true
     title: qsTr("text_Mail")
+    //背景颜色
     Rectangle{
         id:window_bg
         width: main_window.width
@@ -21,19 +22,24 @@ Window {
             GradientStop { position: 1.0; color: "steelblue" }
         }
     }
+    //整个窗口布局
     RowLayout{
         anchors.fill: parent
         width: 1040
         height:980
         spacing: 0
+        //侧边栏
         ColumnLayout{
-            width: 200
+            Layout.margins: 10
+            width: 180
             height: 980
+            //图标和写信功能
             Rectangle{
                 id:mail_message
-                width: 200
+                width: 180
                 height: 150
                 color: "red"
+                //写信功能
                 Rectangle{
                    id:msg_tx_bg
                    width: 180
@@ -47,6 +53,7 @@ Window {
                 }
 
             }
+            //工具栏模型
             ListModel{
                 id:tool_lm
                 ListElement{ name: qsTr("Inbox")}
@@ -54,20 +61,22 @@ Window {
                 ListElement{ name: qsTr("Sent") }
                 ListElement{ name: qsTr("Drafts") }
             }
+            //工具栏视图
             Rectangle{
                 color:"transparent"
                 id:tool_lv
-                width: 200
+                width: 180
                 height: 980-mail_message.height
                 ListView{
                     anchors.fill: parent
                     opacity: 1
                     visible: true
+                    spacing: 10
                     model: tool_lm
                     delegate:ColumnLayout{
                         Rectangle{
                             id:tool
-                            width: 200
+                            width: 180
                             height: 50
                             radius: 20
                             color:tool_ma.containsMouse?"lightslategrey":"transparent"
@@ -90,16 +99,15 @@ Window {
                 }
             }
         }
+        //邮件内容
         ColumnLayout{
             id:content_bg
             Layout.fillWidth:true
-            //width: main_window.width-tool_lv.width
             height: main_window.height
             Rectangle{
                 id:content
                 Layout.fillWidth:true
                 Layout.preferredWidth: main_window.width-tool_lv.width
-                //width: main_window.width-tool_lv.width
                 height: main_window.height
                 color: "white"
             }
