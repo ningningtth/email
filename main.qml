@@ -3,14 +3,14 @@ import QtQuick.Window 2.15
 import QtQuick
 import QtQuick.Controls
 import QtQuick.Layouts
-
-Window {
+//主界面
+ApplicationWindow {
     id:main_window
     width: 1040
     height: 980
     color: "grey"
     visible: true
-    title: qsTr("text_Mail")
+    title: qsTr("Mail")
     //背景颜色
     Rectangle{
         id:window_bg
@@ -33,13 +33,20 @@ Window {
             Layout.margins: 10
             width: 180
             height: 980
-            //图标和写信功能
+            //图标
+            Image {
+                width: 180
+                source: "logo.png"
+                fillMode: Image.PreserveAspectFit
+                Component.onCompleted: console.log("Actual size:", width, height)
+            }
+            //写信功能
             Rectangle{
                 id:mail_message
                 width: 180
-                height: 150
-                color: "red"
-                //写信功能
+                height: 200
+                color:"transparent"
+                //color: "red"
                 Rectangle{
                    id:msg_tx_bg
                    width: 180
@@ -51,7 +58,6 @@ Window {
                        text: qsTr("Compose")
                    }
                 }
-
             }
             //工具栏模型
             ListModel{
@@ -93,6 +99,11 @@ Window {
                                 id:tool_ma
                                 anchors.fill: parent
                                 hoverEnabled: true
+                                onClicked: {
+                                    if(index==0)
+                                        content_loader.source="mailMsg.qml"
+
+                                }
                             }
                         }
                     }
@@ -104,13 +115,86 @@ Window {
             id:content_bg
             Layout.fillWidth:true
             height: main_window.height
+            RowLayout{
+                width: 200
+                height: 48
+                Text {
+                    text: qsTr("请登录")
+                }
+                Rectangle{
+                    width: 45
+                    height: 45
+                    radius: 50
+                    color: "grey"
+                }
+                MouseArea{
+                    width: 200
+                    height: 48
+                    anchors.fill:parent
+                    onClicked: {
+                        sign_in.open()
+                    }
+                }
+                Popup{
+                    width: 400
+                    height: 200
+                    id:sign_in
+                    contentItem:ColumnLayout{
+                        RowLayout{
+                            Text {
+                                text: qsTr("账号")
+                            }
+                            TextInput{
+                                width: 400
+                                height: 200
+                                //placeholderText: "请输入邮箱"
+                                inputMask:  qsTr("qqnumber+@qq.com")
+                                validator:  RegularExpressionValidator {
+                                        regularExpression: /^[a-zA-Z0-9._%+-]+@[a-zA-Z0-9.-]+\.[a-zA-Z]{2,}$/
+                                    }
+                            }
+                        }
+                        Label {
+                            id: errorLabel1
+                            color: "red"
+                        }
+                        RowLayout{
+                            Text {
+                                text: qsTr("密码")
+                            }
+                            TextInput{
+                                width: 400
+                                height: 200
+                                text: qsTr("   ")
+                            }
+                        }
+                        Label {
+                            id: errorLabel2
+                            color: "red"
+                            //text: qsTr("密码")
+                        }
+                        Button { text: qsTr("登陆") }
+                    }
+                }
+            }
+
             Rectangle{
                 id:content
                 Layout.fillWidth:true
-                Layout.preferredWidth: main_window.width-tool_lv.width
+                radius: 20
+                Layout.preferredWidth: main_window.width-tool_lv.width-20
                 height: main_window.height
                 color: "white"
-            }
+                Loader {
+                    id:content_loader
+                    source: "writeMail.qml"
+                }
         }
     }
+        Rectangle{
+            height: main_window.height
+            width: 10
+            color:"transparent"
+        }
+  }
 }
