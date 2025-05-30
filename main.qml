@@ -13,10 +13,10 @@ ApplicationWindow {
     id:main_window
     WriteMail{
         id:write_mail
-        //username: 19132023052@163.com
+        //username: m19132023052@163.com
         //password: CPdNrjbGEqnh43rd
         //receiver: 2448392399@qq.com
-        Component.onCompleted: console.log("succssedlly")
+        Component.onCompleted: console.log("succssed")
     }
     width: 1040
     height: 980
@@ -172,7 +172,7 @@ ApplicationWindow {
                         id:sign_in
                         ColumnLayout{
                             Text {
-                                text: qsTr("text")
+                                text: qsTr("邮箱")
                             }
                             TextField{
                                 id:set_username
@@ -188,7 +188,7 @@ ApplicationWindow {
                                 color: "red"
                             }
                             Text {
-                                text: qsTr("text")
+                                text: qsTr("授权码")
                             }
                             TextField{
                                 id:set_password
