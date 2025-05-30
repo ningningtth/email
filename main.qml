@@ -3,9 +3,21 @@ import QtQuick.Window 2.15
 import QtQuick
 import QtQuick.Controls
 import QtQuick.Layouts
+import writeMail 1.0
+import "mail.js" as Controller
 //主界面
 ApplicationWindow {
+    property alias qqid:set_username
+    property alias password:set_password
+    property alias write_mail:write_mail
     id:main_window
+    WriteMail{
+        id:write_mail
+        //username: 19132023052@163.com
+        //password: CPdNrjbGEqnh43rd
+        //receiver: 2448392399@qq.com
+        Component.onCompleted: console.log("succssedlly")
+    }
     width: 1040
     height: 980
     color: "grey"
@@ -38,15 +50,14 @@ ApplicationWindow {
                 width: 180
                 source: "logo.png"
                 fillMode: Image.PreserveAspectFit
-                Component.onCompleted: console.log("Actual size:", width, height)
+                //Component.onCompleted: console.log("Actual size:", width, height)
             }
             //写信功能
             Rectangle{
                 id:mail_message
                 width: 180
-                height: 200
+                height: 80
                 color:"transparent"
-                //color: "red"
                 Rectangle{
                    id:msg_tx_bg
                    width: 180
@@ -56,6 +67,13 @@ ApplicationWindow {
                        id:msg_text
                        anchors.centerIn: parent
                        text: qsTr("Compose")
+                   }
+                   MouseArea{
+                       anchors.fill: parent
+                       hoverEnabled: true
+                       onClicked: {
+                               content_loader.source="writeMail.qml"
+                       }
                    }
                 }
             }
@@ -101,6 +119,8 @@ ApplicationWindow {
                                 hoverEnabled: true
                                 onClicked: {
                                     if(index==0)
+                                        content_loader.source="mailMsgs.qml"
+                                    if(index==1)
                                         content_loader.source="mailMsg.qml"
 
                                 }
@@ -110,87 +130,116 @@ ApplicationWindow {
                 }
             }
         }
-        //邮件内容
+        //邮件内容,登陆
         ColumnLayout{
             id:content_bg
             Layout.fillWidth:true
             height: main_window.height
+            //
             RowLayout{
-                width: 200
+                Layout.preferredWidth: main_window.width-tool_lv.width
                 height: 48
-                Text {
-                    text: qsTr("请登录")
-                }
-                Rectangle{
-                    width: 45
+                //搜索框
+                /*Rectangle{
+                    width: 400
                     height: 45
                     radius: 50
-                    color: "grey"
-                }
-                MouseArea{
+                    color: "transparent"
+                }*/
+                RowLayout{
                     width: 200
                     height: 48
-                    anchors.fill:parent
-                    onClicked: {
-                        sign_in.open()
+                    Rectangle{
+                        width: 45
+                        height: 45
+                        radius: 50
+                        color: "grey"
                     }
-                }
-                Popup{
-                    width: 400
-                    height: 200
-                    id:sign_in
-                    contentItem:ColumnLayout{
-                        RowLayout{
+                    Text {
+                        id:username
+                        width: 100
+                        text: qsTr("点击登录")
+                    }
+                    TapHandler{
+                        onTapped: {
+                            sign_in.open()
+                        }
+                    }
+                    //登陆弹窗
+                    Popup{
+                        width: 200
+                        height: 200
+                        id:sign_in
+                        ColumnLayout{
                             Text {
-                                text: qsTr("账号")
+                                text: qsTr("text")
                             }
-                            TextInput{
-                                width: 400
-                                height: 200
-                                //placeholderText: "请输入邮箱"
-                                inputMask:  qsTr("qqnumber+@qq.com")
-                                validator:  RegularExpressionValidator {
+                            TextField{
+                                id:set_username
+                                placeholderText: qsTr("text")
+                                validator: RegularExpressionValidator {
                                         regularExpression: /^[a-zA-Z0-9._%+-]+@[a-zA-Z0-9.-]+\.[a-zA-Z]{2,}$/
                                     }
                             }
-                        }
-                        Label {
-                            id: errorLabel1
-                            color: "red"
-                        }
-                        RowLayout{
+                            // 错误提示
+                            Label{
+                                opacity: !set_username.acceptableInput
+                                text: set_username.text ? "邮箱格式不正确" : "请输入账号"
+                                color: "red"
+                            }
                             Text {
-                                text: qsTr("密码")
+                                text: qsTr("text")
                             }
-                            TextInput{
-                                width: 400
-                                height: 200
-                                text: qsTr("   ")
+                            TextField{
+                                id:set_password
+                                placeholderText: qsTr("text")
+                            }
+                            // 错误提示
+                            Label{
+                                //空白
+                                opacity: !set_password.text
+                                text:"请输入密码"
+                                color: "red"
+                            }
+                            Label{
+                                //空白
+                            }
+                            //提交
+                            Button{
+                                text: qsTr("commit")
+                                onClicked: {
+                                    if(qqid.text!=""){
+                                       write_mail.username=Controller.getusername()
+                                       write_mail.password=Controller.getpassword()
+                                       username.text=qqid.text}
+                                    sign_in.close()
+                                }
                             }
                         }
-                        Label {
-                            id: errorLabel2
-                            color: "red"
-                            //text: qsTr("密码")
-                        }
-                        Button { text: qsTr("登陆") }
                     }
                 }
+                Rectangle{
+                    width: 70
+                    height: 45
+                    radius: 50
+                    color: "transparent"
+                }
+
             }
 
             Rectangle{
                 id:content
                 Layout.fillWidth:true
                 radius: 20
-                Layout.preferredWidth: main_window.width-tool_lv.width-20
+                Layout.preferredWidth: main_window.width-tool_lv.width
                 height: main_window.height
                 color: "white"
                 Loader {
                     id:content_loader
-                    source: "writeMail.qml"
+                    source: "mailMsgs.qml"
                 }
+            }
         }
-    }
         Rectangle{
             height: main_window.height
             width: 10
