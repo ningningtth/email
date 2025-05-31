@@ -1,9 +1,18 @@
 #include <QGuiApplication>
 #include <QQmlApplicationEngine>
 #include "writemail.h"
+#include "MailModel.h"
+#include "DatabaseManager.h"
 int main(int argc, char *argv[])
 {
     QGuiApplication app(argc, argv);
+    //database initialisation
+    DatabaseManager::instance();
+
+    //register MailModel for QML
+    qmlRegisterType<MailModel>("Mail",1,0,"MailModel");
+
+
     qmlRegisterType<writeMail>("writeMail", 1, 0, "WriteMail");
 
     QQmlApplicationEngine engine;
