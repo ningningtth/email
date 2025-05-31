@@ -3,10 +3,14 @@ import QtQuick.Window 2.15
 import QtQuick
 import QtQuick.Controls
 import QtQuick.Layouts
+import QtQuick.Dialogs
 import writeMail 1.0
 import "mail.js" as Controller
 //写邮件
 Item {
+    property alias receiver:set_receiver
+    property alias subject:set_subject
+    property alias content:set_content
     height: 800
     width: 500
     //Layout.alignment:Qt.AlignHCenter
@@ -51,11 +55,10 @@ Item {
                     }
                     TapHandler{
                         onTapped: {
-                            write_mail.receiver=set_receiver.text
-                            write_mail.subject=set_subject.text
-                            write_mail.content=set_content.text
+                            //write_mail.receiver=Controller.getreceiver()
+                            write_mail.subject=Controller.getsubject()
+                            write_mail.content=Controller.getcontent()
                             write_mail.send(write_mail.receiver,write_mail.subject,write_mail.content)
-
                         }
                     }
                 }
@@ -69,6 +72,22 @@ Item {
                     Text{
                         text:qsTr("附件")
                         anchors.centerIn: parent
+                    }
+                    TapHandler{
+                        onTapped: {
+                            file.open()
+                        }
+                    }
+                    FileDialog{
+                        id:file
+                        onAccepted: {
+                            var url=file.selectedFile
+                            write_mail.attachments=url
+                            //write_mail.receiver=Controller.getreceiver()
+                            write_mail.subject=Controller.getsubject()
+                            write_mail.content=Controller.getcontent()
+                            write_mail.sendWithAttachments(write_mail.receiver,write_mail.subject,write_mail.content,write_mail.attachments)
+                        }
                     }
 
                 }
@@ -95,6 +114,7 @@ Item {
                 }
                 TextEdit{
                     id:set_receiver
+                    text: write_mail.receiver ? write_mail.receiver : ""
                     width: 500
                     height: 200
 
@@ -154,6 +174,6 @@ Item {
                 }
             }
         }
-
     }
 }
+

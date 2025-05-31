@@ -7,15 +7,16 @@ import writeMail 1.0
 import "mail.js" as Controller
 //主界面
 ApplicationWindow {
-    property alias qqid:set_username
-    property alias password:set_password
+    //property alias qqid:set_username
+    //property alias password:set_password
+    property alias content_loader:content_loader
     property alias write_mail:write_mail
     id:main_window
     WriteMail{
         id:write_mail
-        //username: m19132023052@163.com
-        //password: CPdNrjbGEqnh43rd
-        //receiver: 2448392399@qq.com
+        username: "m19132023052@163.com"
+        password: "CPdNrjbGEqnh43rd"
+        receiver: "2448392399@qq.com"
         Component.onCompleted: console.log("succssed")
     }
     width: 1040
@@ -140,12 +141,12 @@ ApplicationWindow {
                 Layout.preferredWidth: main_window.width-tool_lv.width
                 height: 48
                 //搜索框
-                /*Rectangle{
+                Rectangle{
                     width: 400
-                    height: 45
+                    height: 35
                     radius: 50
-                    color: "transparent"
-                }*/
+                    //color: "transparent"
+                }
                 RowLayout{
                     width: 200
                     height: 48
@@ -158,63 +159,11 @@ ApplicationWindow {
                     Text {
                         id:username
                         width: 100
-                        text: qsTr("点击登录")
+                        text: write_mail.username ? write_mail.username : qsTr("点击登录")
                     }
                     TapHandler{
                         onTapped: {
-                            sign_in.open()
-                        }
-                    }
-                    //登陆弹窗
-                    Popup{
-                        width: 200
-                        height: 200
-                        id:sign_in
-                        ColumnLayout{
-                            Text {
-                                text: qsTr("邮箱")
-                            }
-                            TextField{
-                                id:set_username
-                                placeholderText: qsTr("text")
-                                validator: RegularExpressionValidator {
-                                        regularExpression: /^[a-zA-Z0-9._%+-]+@[a-zA-Z0-9.-]+\.[a-zA-Z]{2,}$/
-                                    }
-                            }
-                            // 错误提示
-                            Label{
-                                opacity: !set_username.acceptableInput
-                                text: set_username.text ? "邮箱格式不正确" : "请输入账号"
-                                color: "red"
-                            }
-                            Text {
-                                text: qsTr("授权码")
-                            }
-                            TextField{
-                                id:set_password
-                                placeholderText: qsTr("text")
-                            }
-                            // 错误提示
-                            Label{
-                                //空白
-                                opacity: !set_password.text
-                                text:"请输入密码"
-                                color: "red"
-                            }
-                            Label{
-                                //空白
-                            }
-                            //提交
-                            Button{
-                                text: qsTr("commit")
-                                onClicked: {
-                                    if(qqid.text!=""){
-                                       write_mail.username=Controller.getusername()
-                                       write_mail.password=Controller.getpassword()
-                                       username.text=qqid.text}
-                                    sign_in.close()
-                                }
-                            }
+                            content_loader.source="signIn.qml"
                         }
                     }
                 }
