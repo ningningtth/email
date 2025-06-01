@@ -55,12 +55,30 @@ Item {
                     }
                     TapHandler{
                         onTapped: {
-                            //write_mail.receiver=Controller.getreceiver()
+                            if (!write_mail.receiver){
+                                write_mail.receiver=Controller.getreceiver()
+                            }
                             write_mail.subject=Controller.getsubject()
                             write_mail.content=Controller.getcontent()
-                            write_mail.send(write_mail.receiver,write_mail.subject,write_mail.content)
+                            if(write_mail.attachments){
+                                write_mail.sendWithAttachments(write_mail.receiver,write_mail.subject,write_mail.content,write_mail.attachments)
+                            }
+                            else write_mail.send(write_mail.receiver,write_mail.subject,write_mail.content)
                         }
                     }
+                }
+                //图片
+                Rectangle{
+                    width: 80
+                    height: 40
+                    radius: 20
+                    /*border.color: "lightsteelblue"
+                    border.width: 1
+                    Text{
+                        text:qsTr("图片")
+                        anchors.centerIn: parent
+                    }*/
+
                 }
                 //附件
                 Rectangle{
@@ -83,28 +101,15 @@ Item {
                         onAccepted: {
                             var url=file.selectedFile
                             write_mail.attachments=url
-                            //write_mail.receiver=Controller.getreceiver()
+                            if (!write_mail.receiver){
+                                write_mail.receiver=Controller.getreceiver()
+                            }
                             write_mail.subject=Controller.getsubject()
                             write_mail.content=Controller.getcontent()
-                            write_mail.sendWithAttachments(write_mail.receiver,write_mail.subject,write_mail.content,write_mail.attachments)
                         }
                     }
 
                 }
-                //图片
-                Rectangle{
-                    width: 80
-                    height: 40
-                    radius: 20
-                    border.color: "lightsteelblue"
-                    border.width: 1
-                    Text{
-                        text:qsTr("图片")
-                        anchors.centerIn: parent
-                    }
-
-                }
-
             }
             //收件人和输入框
             RowLayout{
