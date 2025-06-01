@@ -1,32 +1,34 @@
-#pragma once
+#ifndef WRITEMAIL_H
+#define WRITEMAIL_H
 
+#include <QObject>
 #include <QByteArray>
 #include <QString>
-#include <QDebug>
-#include <QObject>
-#include <QQmlEngine>
-#include <QtNetwork/QHostInfo>
-#include <QtNetwork/QSslSocket>
-#include <QtNetwork/QTcpSocket>
-#include <QtQml/qqmlregistration.h>
-#include <QFile>
-#include <QFileInfo>
+#include <QStringList>
+#include <QSslSocket>
+
 class writeMail : public QObject
 {
     Q_OBJECT
-    QML_ELEMENT
-    Q_PROPERTY(QByteArray username READ getusername WRITE setusername NOTIFY UsernameChange)
-    Q_PROPERTY(QByteArray password READ getpassword WRITE setpassword NOTIFY PasswordChange)
-    Q_PROPERTY(QByteArray receiver READ getreceiver WRITE setreceiver NOTIFY ReceiverChange)
-    Q_PROPERTY(QString subject READ getsubject WRITE setsubject NOTIFY SubjectChange)
-    Q_PROPERTY(QString content READ getcontent WRITE setcontent NOTIFY ContentChange)
+    Q_PROPERTY(QByteArray username READ getusername WRITE setusername)
+    Q_PROPERTY(QByteArray password READ getpassword WRITE setpassword)
+    Q_PROPERTY(QByteArray receiver READ getreceiver WRITE setreceiver)
+    Q_PROPERTY(QString subject READ getsubject WRITE setsubject)
+    Q_PROPERTY(QString content READ getcontent WRITE setcontent)
+    Q_PROPERTY(QStringList attachments READ getattachments WRITE setattachments)
+
 public:
-    writeMail(QObject *parent = nullptr,
-              QByteArray username = QByteArray(),
-              QByteArray password = QByteArray());
+    explicit writeMail(QObject *parent = nullptr,
+                       QByteArray username = QByteArray(),
+                       QByteArray password = QByteArray());
     ~writeMail();
 public slots:
-    Q_INVOKABLE void send(QByteArray receiver, QString subject, QString content);
+    void send(QByteArray receiver, QString subject, QString content);
+    void sendWithAttachments(QByteArray receiver,
+                             QString subject,
+                             QString content,
+                             const QStringList &attachments);
+
     Q_INVOKABLE void setusername(QByteArray username);
     Q_INVOKABLE QByteArray getusername();
     Q_INVOKABLE void setpassword(QByteArray password);
@@ -37,25 +39,25 @@ public slots:
     Q_INVOKABLE QString getsubject();
     Q_INVOKABLE void setcontent(QString content);
     Q_INVOKABLE QString getcontent();
+    Q_INVOKABLE void setattachments(QStringList attachments);
+    Q_INVOKABLE QStringList getattachments();
 signals:
-    void DataReceived(QByteArray data);
-    void UsernameChange(QByteArray username);
-    void PasswordChange(QByteArray password);
-    void ReceiverChange(QByteArray receiver);
-    void SubjectChange(QString subject);
-    void ContentChange(QString content);
+    void errorOccurred(const QString &message);
+    void finished();
 
 private:
-    QTcpSocket *socket;
+    void addAttachment(const QString &filePath, const QString &boundary);
+    void sendCommand(const QByteArray &command);
+    void onReadyRead();
+    void onSslErrors(const QList<QSslError> &errors);
+
+    QSslSocket *socket;
     QByteArray username;
     QByteArray password;
     QByteArray receiver;
     QString subject;
     QString content;
-    QByteArray data;
-    QByteArray presubject = "Subject:";
-    QByteArray mailfrom = "MAIL FROM:<";
-    QByteArray rcptto = "RCPT TO:<";
-    QByteArray prefrom = "From:";
-    QByteArray preto = "To:";
+    QStringList attachments;
 };
+
+#endif
